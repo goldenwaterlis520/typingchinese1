@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>李老师打字游戏</title>
+    <style>
+        /* 全局样式 */
+        body {
+            background-color: #f5f5dc; /* 奶白色背景 */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 标题样式 */
+        h1 {
+            font-size: 36px;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        /* 游戏区域样式 */
+        #game-area {
+            margin-top: 50px;
+        }
+
+        /* 句子显示区域样式 */
+        #sentence {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        /* 输入框和确认按钮样式 */
+        #input-area {
+            font-size: 20px;
+            padding: 10px;
+            width: 400px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        #confirm-button {
+            font-size: 20px;
+            padding: 10px 20px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        #confirm-button:hover {
+            background-color: #45a049;
+        }
+
+        /* 结果显示区域样式 */
+        #result {
+            font-size: 24px;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        /* 翻译结果显示区域样式 */
+        #translations {
+            font-size: 20px;
+            margin-top: 20px;
+            color: #555;
+            text-align: left;
+            display: inline-block;
+        }
+
+        /* 提示信息样式 */
+        #hint {
+            font-size: 18px;
+            color: #777;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>李老师打字游戏 LiLaoShi Typing Competition</h1>
+    <div id="game-area">
+        <div id="sentence"></div>
+        <input type="text" id="input-area" placeholder="请输入中文翻译..." autofocus>
+        <button id="confirm-button">确认</button>
+        <div id="result"></div>
+        <div id="translations"></div>
+        <div id="hint"></div>
+    </div>
+
+    <script>
+        // 英文句子和对应的中文翻译
+        const sentences = [
+            "I like chicken.",
+            "I don't like seafood.",
+            "I want a plate of pasta.",
+            "Do you like pizza?",
+            "This is soup.",
+            "I’m hungry. I want to eat hamburger.",
+            "How many bowls of noddle do you want?",
+            "This beef is tasty."
+        ];
+
+        const translations = [
+            "我喜欢鸡肉。",
+            "我不喜欢海鲜。",
+            "我要一碟意面。",
+            "你喜欢披萨吗？",
+            "这是汤。",
+            "我饿了，我要吃汉堡包。",
+            "你要几碗面条？",
+            "这是牛肉。"
+        ];
+
+        // 游戏变量
+        let currentSentenceIndex = 0; // 当前句子索引
+        let startTime; // 游戏开始时间
+        let userTranslations = []; // 用户输入的翻译
+
+        // 获取DOM元素
+        const sentenceElement = document.getElementById("sentence");
+        const inputArea = document.getElementById("input-area");
+        const confirmButton = document.getElementById("confirm-button");
+        const resultElement = document.getElementById("result");
+        const translationsElement = document.getElementById("translations");
+        const hintElement = document.getElementById("hint");
+
+        // 初始化游戏
+        function startGame() {
+            currentSentenceIndex = 0;
+            userTranslations = [];
+            startTime = new Date(); // 记录开始时间
+            showNextSentence();
+        }
+
+        // 显示下一个句子
+        function showNextSentence() {
+            if (currentSentenceIndex < sentences.length) {
+                sentenceElement.textContent = sentences[currentSentenceIndex];
+                inputArea.value = ""; // 清空输入框
+                inputArea.focus(); // 聚焦输入框
+                hintElement.textContent = ""; // 清空提示信息
+            } else {
+                endGame(); // 游戏结束
+            }
+        }
+
+        // 检查用户输入
+        function checkInput() {
+            const userInput = inputArea.value;
+            userTranslations.push(userInput); // 保存用户输入的翻译
+
+            // 进入下一个句子
+            currentSentenceIndex++;
+            showNextSentence();
+        }
+
+        // 游戏结束
+        function endGame() {
+            const endTime = new Date();
+            const timeTaken = (endTime - startTime) / 1000; // 计算用时（秒）
+
+            // 显示所有翻译
+            translationsElement.innerHTML = "<strong>你的翻译结果：</strong><br>";
+            for (let i = 0; i < sentences.length; i++) {
+                translationsElement.innerHTML += `
+                    <strong>你的翻译：</strong>${userTranslations[i]}<br>
+                    <strong>正确答案：</strong>${translations[i]}<br><br>
+                `;
+            }
+
+            // 显示用时
+            const minutes = Math.floor(timeTaken / 60);
+            const seconds = Math.floor(timeTaken % 60);
+            resultElement.textContent = `你用了 ${minutes} 分 ${seconds} 秒完成挑战！`;
+        }
+
+        // 禁止复制粘贴
+        inputArea.addEventListener("copy", (e) => e.preventDefault());
+        inputArea.addEventListener("paste", (e) => e.preventDefault());
+        inputArea.addEventListener("cut", (e) => e.preventDefault());
+
+        // 监听确认按钮点击事件
+        confirmButton.addEventListener("click", checkInput);
+
+        // 启动游戏
+        startGame();
+    </script>
+</body>
+</html>
